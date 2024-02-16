@@ -1,0 +1,45 @@
+scalar Int64
+scalar Time
+
+directive @isAuthenticated on FIELD_DEFINITION
+
+type User {
+    id: Int64
+    name: String!
+    bio: String!
+    email: String!
+    password: String!
+    image: String
+    isadmin: Boolean
+    accessToken: AccessToken
+}
+
+type AccessToken {
+    token: String!
+}
+
+type Error {
+    statuscode: Int!
+    message: String!
+}
+
+input RegisterUser {
+    name: String!
+    bio: String!
+    email: String!
+    password: String!
+    image: String
+    isadmin: Boolean
+}
+
+input LoginUser {
+    email: String!
+    password: String!
+}
+
+type Mutation {
+    registerUser(input: RegisterUser!): String!
+    loginUser(input: LoginUser!): User!
+    addArticle(input: AddArticle!): String! @isAuthenticated
+    updateArticle(input: UpdateArticle!): String! 
+}

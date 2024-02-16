@@ -1,0 +1,39 @@
+type Article {
+    id: Int64
+    title: String!
+    content: String!
+    image: String
+    nooflikes: Int64
+    noofviews: Int64
+    topic: Int64!
+    author: Int64!
+    publishedat: Time
+}
+
+input AddArticle {
+    title: String!
+    content: String!
+    image: String
+    nooflikes: Int64
+    noofviews: Int64
+    topic: Int64!
+    author: Int64
+    publishedat: String
+}
+
+input UpdateArticle {
+    id: Int64!
+    title: String
+    content: String
+    image: String
+    nooflikes: Int64
+    noofviews: Int64
+    topic: Int64
+    publishedat: String
+}
+
+type Query {
+    getArticleByID(id: Int64!): Article
+    getMyArticles: [Article!]
+    deleteArticle(id: Int64!): String!
+}

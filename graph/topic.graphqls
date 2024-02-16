@@ -1,0 +1,14 @@
+type Topic {
+    ID: Int64
+    name: String!
+}
+
+input AddTopic {
+    name: String!
+}
+
+input UpdateTopic {
+    ID: Int64!
+    name: String!
+}
+
