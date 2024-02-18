@@ -1,7 +1,7 @@
 package constants
 
 var (
-	PORT_NO = ":8080"
+	PORT_NO = ":8888"
 	EMPTY_STRING = ""
 	TOKEN_REFRESH = "Token Refresh Successfully."
 	USER_REGISTRATION_SUCCEED = "User Registration Done Successfully."

@@ -2,6 +2,7 @@ scalar Int64
 scalar Time
 
 directive @isAuthenticated on FIELD_DEFINITION
+directive @isAdmin on FIELD_DEFINITION
 
 type User {
     id: Int64
@@ -41,5 +42,7 @@ type Mutation {
     registerUser(input: RegisterUser!): String!
     loginUser(input: LoginUser!): User!
     addArticle(input: AddArticle!): String! @isAuthenticated
-    updateArticle(input: UpdateArticle!): String! 
+    updateArticle(input: UpdateArticle!): String! @isAuthenticated
+    addTopic(input: AddTopic!): String!
+    updateTopic(input: UpdateTopic!): String!
 }

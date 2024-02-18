@@ -91,3 +91,7 @@ models:
   Time:
     model:
       - github.com/99designs/gqlgen/graphql.Time
+  Topic:
+    fields:
+      articles:
+        resolver: true

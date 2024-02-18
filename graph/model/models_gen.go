@@ -63,8 +63,9 @@ type RegisterUser struct {
 }
 
 type Topic struct {
-	ID   *int64 `json:"ID,omitempty"`
-	Name string `json:"name"`
+	ID       *int64     `json:"id,omitempty"`
+	Name     string     `json:"name"`
+	Articles []*Article `json:"articles,omitempty"`
 }
 
 type UpdateArticle struct {
@@ -79,7 +80,7 @@ type UpdateArticle struct {
 }
 
 type UpdateTopic struct {
-	ID   int64  `json:"ID"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 

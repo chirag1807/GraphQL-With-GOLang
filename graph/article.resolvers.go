@@ -41,6 +41,22 @@ func (r *queryResolver) DeleteArticle(ctx context.Context, id int64) (string, er
 	return message, err
 }
 
+// GetTopics is the resolver for the getTopics field.
+func (r *queryResolver) GetTopics(ctx context.Context) ([]*model.Topic, error) {
+	var topicIds []string
+	topicIds = append(topicIds, "941510622923816961", "941510542024474625", "941510596722393089", "943765517224148993")
+	return repository.GetAllTopics(ctx, topicIds)
+
+	// topics, err := repository.GetAllTopics(ctx.Value("conn").(*pgx.Conn))
+	// return topics, err
+}
+
+// DeleteTopic is the resolver for the deleteTopic field.
+func (r *queryResolver) DeleteTopic(ctx context.Context, id int64) (string, error) {
+	message, err := repository.DeleteTopic(ctx.Value("conn").(*pgx.Conn), id)
+	return message, err
+}
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 

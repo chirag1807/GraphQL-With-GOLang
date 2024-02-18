@@ -34,6 +34,8 @@ input UpdateArticle {
 
 type Query {
     getArticleByID(id: Int64!): Article
-    getMyArticles: [Article!]
-    deleteArticle(id: Int64!): String!
+    getMyArticles: [Article!] @isAuthenticated
+    deleteArticle(id: Int64!): String! @isAuthenticated
+    getTopics: [Topic!]
+    deleteTopic(id: Int64!): String! @isAuthenticated @isAdmin
 }

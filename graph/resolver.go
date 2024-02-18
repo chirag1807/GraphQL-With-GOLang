@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // This file will not be regenerated automatically.
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-type Resolver struct{}
+type Resolver struct{
+	DB *pgx.Conn
+}
 
 type Int64 int64
 type Time time.Time

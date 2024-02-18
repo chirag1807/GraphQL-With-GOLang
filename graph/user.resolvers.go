@@ -43,9 +43,9 @@ func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginUser)
 
 // AddArticle is the resolver for the addArticle field.
 func (r *mutationResolver) AddArticle(ctx context.Context, input model.AddArticle) (string, error) {
-	fmt.Println("1")
 	var article = input
 	userID, _ := ctx.Value("id").(int64)
+	fmt.Println(userID)
 	article.Author = &userID
 	message, err := repository.AddArticle(ctx.Value("conn").(*pgx.Conn), article)
 	return message, err
@@ -58,6 +58,20 @@ func (r *mutationResolver) UpdateArticle(ctx context.Context, input model.Update
 	}
 	var article = input
 	message, err := repository.UpdateArticle(ctx.Value("conn").(*pgx.Conn), article)
+	return message, err
+}
+
+// AddTopic is the resolver for the addTopic field.
+func (r *mutationResolver) AddTopic(ctx context.Context, input model.AddTopic) (string, error) {
+	var topic = input
+	message, err := repository.AddTopic(ctx.Value("conn").(*pgx.Conn), topic)
+	return message, err
+}
+
+// UpdateTopic is the resolver for the updateTopic field.
+func (r *mutationResolver) UpdateTopic(ctx context.Context, input model.UpdateTopic) (string, error) {
+	var topic = input
+	message, err := repository.UpdateTopic(ctx.Value("conn").(*pgx.Conn), topic)
 	return message, err
 }
 

@@ -1,8 +1,9 @@
 package middleware
 
 import (
+	"articlewithgraphql/error"
+	"articlewithgraphql/utils"
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/jackc/pgx/v5"
@@ -11,7 +12,6 @@ import (
 func SetDBConnection(conn *pgx.Conn) func(handler http.Handler) http.Handler {
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("1")
 			token := r.Header.Get("Authorization")
 			ctx := context.WithValue(r.Context(), "conn", conn)
 			ctx = context.WithValue(ctx, "token", token)
@@ -20,15 +20,29 @@ func SetDBConnection(conn *pgx.Conn) func(handler http.Handler) http.Handler {
 	}
 }
 
-func AuthenticateUser() func(handler http.Handler) http.Handler {
-	return func(handler http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Middleware: Before handling the request")
+func AuthenticateUser(ctx context.Context) (context.Context, error) {
+	token := ctx.Value("token").(string)
+	if token != "" {
+		id, isadmin, err := utils.VerifyToken(token)
+		if err != nil {
+			return ctx, errorhandling.AccessTokenExpired
+		}
+		ctx = context.WithValue(ctx, "id", id)
+		ctx = context.WithValue(ctx, "isadmin", isadmin)
+		return ctx, nil
+	} else {
+		return ctx, errorhandling.TokenNotFound
+	}
+}
 
-			// Call the next handler in the chain
-			handler.ServeHTTP(w, r)
-
-			fmt.Println("Middleware: After handling the request")
-		})
+func AuthorizeAdmin(ctx context.Context) (error) {
+	if isadmin, ok := ctx.Value("isadmin").(bool); ok {
+		if isadmin {
+			return nil
+		} else {
+			return errorhandling.UnauthorizedError
+		}
+	} else {
+		return errorhandling.TokenNotFound
 	}
 }

@@ -1,6 +1,7 @@
 type Topic {
-    ID: Int64
+    id: Int64
     name: String!
+    articles: [Article]
 }
 
 input AddTopic {
@@ -8,7 +9,6 @@ input AddTopic {
 }
 
 input UpdateTopic {
-    ID: Int64!
+    id: Int64!
     name: String!
 }
-

@@ -24,8 +24,8 @@ func GetMyArticles(pgx *pgx.Conn, author int64) ([]*model.Article, error) {
 	}
 	defer articles.Close()
 
-	var article model.Article
 	for articles.Next() {
+		var article model.Article
 		if err := articles.Scan(&article.ID, &article.Title, &article.Content, &article.Image, &article.Nooflikes, &article.Noofviews, &article.Topic, &article.Author, &article.Publishedat); err != nil {
 			return articlesSlice, err
 		}
