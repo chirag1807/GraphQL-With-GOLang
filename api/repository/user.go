@@ -9,11 +9,11 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RegisterUser(pgx *pgx.Conn, user model.RegisterUser) (string, error) {
+func RegisterUser(pgx *pgxpool.Pool, user model.RegisterUser) (string, error) {
 	isEmail := validation.EmailValidation(user.Email)
 	if !isEmail {
 		return "", errorhandling.EmailvalidationError
@@ -37,7 +37,7 @@ func RegisterUser(pgx *pgx.Conn, user model.RegisterUser) (string, error) {
 
 }
 
-func LoginUser(pgx *pgx.Conn, user model.LoginUser) (model.User, error) {
+func LoginUser(pgx *pgxpool.Pool, user model.LoginUser) (model.User, error) {
 	var dbUser model.User
 	row := pgx.QueryRow(context.Background(), `SELECT id, name, bio, email, password, image, isadmin FROM users WHERE email = $1`, user.Email)
 	err := row.Scan(&dbUser.ID, &dbUser.Name, &dbUser.Bio, &dbUser.Email, &dbUser.Password, &dbUser.Image, &dbUser.Isadmin)

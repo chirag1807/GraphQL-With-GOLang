@@ -10,7 +10,7 @@ import (
 	"articlewithgraphql/graph/model"
 	"context"
 
-	pgx "github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // GetArticleByID is the resolver for the getArticleByID field.
@@ -18,7 +18,7 @@ func (r *queryResolver) GetArticleByID(ctx context.Context, id int64) (*model.Ar
 	if ctx.Value("id") == nil {
 		return &model.Article{}, errorhandling.TokenNotFound
 	}
-	article, err := repository.GetArticleById(ctx.Value("conn").(*pgx.Conn), id)
+	article, err := repository.GetArticleById(ctx.Value("conn").(*pgxpool.Pool), id)
 	return &article, err
 }
 
@@ -28,7 +28,7 @@ func (r *queryResolver) GetMyArticles(ctx context.Context) ([]*model.Article, er
 	if ctx.Value("id") == nil {
 		return articles, errorhandling.TokenNotFound
 	}
-	articles, err := repository.GetMyArticles(ctx.Value("conn").(*pgx.Conn), ctx.Value("id").(int64))
+	articles, err := repository.GetMyArticles(ctx.Value("conn").(*pgxpool.Pool), ctx.Value("id").(int64))
 	return articles, err
 }
 
@@ -37,7 +37,7 @@ func (r *queryResolver) DeleteArticle(ctx context.Context, id int64) (string, er
 	if ctx.Value("id") == nil {
 		return "", errorhandling.TokenNotFound
 	}
-	message, err := repository.DeleteArticle(ctx.Value("conn").(*pgx.Conn), id)
+	message, err := repository.DeleteArticle(ctx.Value("conn").(*pgxpool.Pool), id)
 	return message, err
 }
 
@@ -47,13 +47,13 @@ func (r *queryResolver) GetTopics(ctx context.Context) ([]*model.Topic, error) {
 	topicIds = append(topicIds, "941510622923816961", "941510542024474625", "941510596722393089", "943765517224148993")
 	return repository.GetAllTopics(ctx, topicIds)
 
-	// topics, err := repository.GetAllTopics(ctx.Value("conn").(*pgx.Conn))
+	// topics, err := repository.GetAllTopics(ctx.Value("conn").(*pgxpool.Pool))
 	// return topics, err
 }
 
 // DeleteTopic is the resolver for the deleteTopic field.
 func (r *queryResolver) DeleteTopic(ctx context.Context, id int64) (string, error) {
-	message, err := repository.DeleteTopic(ctx.Value("conn").(*pgx.Conn), id)
+	message, err := repository.DeleteTopic(ctx.Value("conn").(*pgxpool.Pool), id)
 	return message, err
 }
 

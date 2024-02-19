@@ -4,10 +4,10 @@ import (
 	"articlewithgraphql/graph/model"
 	"context"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func AddArticle(pgx *pgx.Conn, article model.AddArticle) (string, error) {
+func AddArticle(pgx *pgxpool.Pool, article model.AddArticle) (string, error) {
 	_, err := pgx.Exec(context.Background(), `INSERT INTO articles (title, content, image, topic, author) VALUES ($1, $2, $3, $4, $5)`, article.Title, article.Content, article.Image, article.Topic, article.Author)
 	if err != nil {
 		return "", err
@@ -15,7 +15,7 @@ func AddArticle(pgx *pgx.Conn, article model.AddArticle) (string, error) {
 	return "Article Added Successfully", nil
 }
 
-func GetMyArticles(pgx *pgx.Conn, author int64) ([]*model.Article, error) {
+func GetMyArticles(pgx *pgxpool.Pool, author int64) ([]*model.Article, error) {
 	articles, err := pgx.Query(context.Background(), `SELECT * FROM articles WHERE author = $1`, author)
 
 	articlesSlice := make([]*model.Article, 0)
@@ -35,7 +35,7 @@ func GetMyArticles(pgx *pgx.Conn, author int64) ([]*model.Article, error) {
 	return articlesSlice, nil
 }
 
-func GetArticleById(pgx *pgx.Conn, id int64) (model.Article, error) {
+func GetArticleById(pgx *pgxpool.Pool, id int64) (model.Article, error) {
 	row := pgx.QueryRow(context.Background(), `SELECT * FROM articles WHERE id = $1`, id)
 
 	var responseArticle model.Article
@@ -47,7 +47,7 @@ func GetArticleById(pgx *pgx.Conn, id int64) (model.Article, error) {
 	return responseArticle, nil
 }
 
-func UpdateArticle(pgx *pgx.Conn, article model.UpdateArticle) (string, error) {
+func UpdateArticle(pgx *pgxpool.Pool, article model.UpdateArticle) (string, error) {
 	_, err := pgx.Exec(context.Background(), `UPDATE articles SET title = $1, content = $2, image = $3, topic = $4 WHERE id = $5`, article.Title, article.Content, article.Image, article.Topic, article.ID)
 	if err != nil {
 		return "", err
@@ -55,7 +55,7 @@ func UpdateArticle(pgx *pgx.Conn, article model.UpdateArticle) (string, error) {
 	return "Article Updated Successfully.", nil
 }
 
-func DeleteArticle(pgx *pgx.Conn, id int64) (string, error) {
+func DeleteArticle(pgx *pgxpool.Pool, id int64) (string, error) {
 	_, err := pgx.Exec(context.Background(), `DELETE FROM articles WHERE id = $1`, id)
 	if err != nil {
 		return "", err

@@ -11,7 +11,7 @@ import (
 	"context"
 	"fmt"
 
-	pgx "github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // RegisterUser is the resolver for the registerUser field.
@@ -21,7 +21,7 @@ func (r *mutationResolver) RegisterUser(ctx context.Context, input model.Registe
 	user.Bio = input.Bio
 	user.Email = input.Email
 	user.Password = input.Password
-	message, err := repository.RegisterUser(ctx.Value("conn").(*pgx.Conn), user)
+	message, err := repository.RegisterUser(ctx.Value("conn").(*pgxpool.Pool), user)
 
 	if err != nil {
 		return "", err
@@ -37,7 +37,7 @@ func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginUser)
 	var user model.LoginUser
 	user.Email = input.Email
 	user.Password = input.Password
-	dbUser, err := repository.LoginUser(ctx.Value("conn").(*pgx.Conn), user)
+	dbUser, err := repository.LoginUser(ctx.Value("conn").(*pgxpool.Pool), user)
 	return &dbUser, err
 }
 
@@ -47,7 +47,7 @@ func (r *mutationResolver) AddArticle(ctx context.Context, input model.AddArticl
 	userID, _ := ctx.Value("id").(int64)
 	fmt.Println(userID)
 	article.Author = &userID
-	message, err := repository.AddArticle(ctx.Value("conn").(*pgx.Conn), article)
+	message, err := repository.AddArticle(ctx.Value("conn").(*pgxpool.Pool), article)
 	return message, err
 }
 
@@ -57,21 +57,21 @@ func (r *mutationResolver) UpdateArticle(ctx context.Context, input model.Update
 		return "", errorhandling.TokenNotFound
 	}
 	var article = input
-	message, err := repository.UpdateArticle(ctx.Value("conn").(*pgx.Conn), article)
+	message, err := repository.UpdateArticle(ctx.Value("conn").(*pgxpool.Pool), article)
 	return message, err
 }
 
 // AddTopic is the resolver for the addTopic field.
 func (r *mutationResolver) AddTopic(ctx context.Context, input model.AddTopic) (string, error) {
 	var topic = input
-	message, err := repository.AddTopic(ctx.Value("conn").(*pgx.Conn), topic)
+	message, err := repository.AddTopic(ctx.Value("conn").(*pgxpool.Pool), topic)
 	return message, err
 }
 
 // UpdateTopic is the resolver for the updateTopic field.
 func (r *mutationResolver) UpdateTopic(ctx context.Context, input model.UpdateTopic) (string, error) {
 	var topic = input
-	message, err := repository.UpdateTopic(ctx.Value("conn").(*pgx.Conn), topic)
+	message, err := repository.UpdateTopic(ctx.Value("conn").(*pgxpool.Pool), topic)
 	return message, err
 }
 

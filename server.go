@@ -24,7 +24,7 @@ func main() {
 	if err != nil {
 		return
 	}
-	defer conn.Close(context.Background())
+	// defer conn.Close(context.Background())
 
 	router := chi.NewRouter()
 	router.Use(middleware.SetDBConnection(conn))

@@ -6,10 +6,10 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func SetDBConnection(conn *pgx.Conn) func(handler http.Handler) http.Handler {
+func SetDBConnection(conn *pgxpool.Pool) func(handler http.Handler) http.Handler {
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token := r.Header.Get("Authorization")
@@ -35,7 +35,7 @@ func AuthenticateUser(ctx context.Context) (context.Context, error) {
 	}
 }
 
-func AuthorizeAdmin(ctx context.Context) (error) {
+func AuthorizeAdmin(ctx context.Context) error {
 	if isadmin, ok := ctx.Value("isadmin").(bool); ok {
 		if isadmin {
 			return nil

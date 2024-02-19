@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func AddTopic(pgx *pgx.Conn, topic model.AddTopic) (string, error) {
+func AddTopic(pgx *pgxpool.Pool, topic model.AddTopic) (string, error) {
 	_, err := pgx.Exec(context.Background(), `INSERT INTO topics (name) VALUES ($1)`, topic.Name)
 	if err != nil {
 		return "", err
@@ -22,7 +22,7 @@ func GetAllTopics(ctx context.Context, topicIds []string) ([]*model.Topic, error
 	return dataloader.GetTopics(ctx, topicIds)
 }
 
-func GetAllTopics1(pgx *pgx.Conn) ([]*model.Topic, error) {
+func GetAllTopics1(pgx *pgxpool.Pool) ([]*model.Topic, error) {
 	topics, err := pgx.Query(context.Background(), `SELECT * FROM topics`)
 	topicsSlice := make([]*model.Topic, 0)
 
@@ -52,7 +52,7 @@ func GetArticlesByTopicId1(ctx context.Context, topicId *int64) ([]*model.Articl
 
 }
 
-func GetArticlesByTopicId(ctx context.Context, pgx *pgx.Conn, topicId int64) ([]*model.Article, error) {
+func GetArticlesByTopicId(ctx context.Context, pgx *pgxpool.Pool, topicId int64) ([]*model.Article, error) {
 
 	rows, err := pgx.Query(ctx, `select id, title, content, topic, author from articles where topic = $1`, topicId)
 	// topics, err := pgx.Query(context.Background(), `SELECT * FROM topics`)
@@ -76,7 +76,7 @@ func GetArticlesByTopicId(ctx context.Context, pgx *pgx.Conn, topicId int64) ([]
 	return articlesSlice, nil
 }
 
-func GetArticlesByTopicId2(ctx context.Context, pgx *pgx.Conn, topicId int64) ([]*model.Article, error) {
+func GetArticlesByTopicId2(ctx context.Context, pgx *pgxpool.Pool, topicId int64) ([]*model.Article, error) {
 
 	rows, err := pgx.Query(ctx, `select id, title, content, topic, author from articles where topic = $1`, topicId)
 
@@ -93,7 +93,7 @@ func GetArticlesByTopicId2(ctx context.Context, pgx *pgx.Conn, topicId int64) ([
 	return articlesSlice, nil
 }
 
-func UpdateTopic(pgx *pgx.Conn, topic model.UpdateTopic) (string, error) {
+func UpdateTopic(pgx *pgxpool.Pool, topic model.UpdateTopic) (string, error) {
 	_, err := pgx.Exec(context.Background(), `UPDATE topics SET name = $1 WHERE id = $2`, topic.Name, topic.ID)
 	if err != nil {
 		return "", err
@@ -101,7 +101,7 @@ func UpdateTopic(pgx *pgx.Conn, topic model.UpdateTopic) (string, error) {
 	return "Topic Updated Successfully.", nil
 }
 
-func DeleteTopic(pgx *pgx.Conn, id int64) (string, error) {
+func DeleteTopic(pgx *pgxpool.Pool, id int64) (string, error) {
 	_, err := pgx.Exec(context.Background(), `DELETE FROM topics WHERE id = $1`, id)
 	if err != nil {
 		return "", err

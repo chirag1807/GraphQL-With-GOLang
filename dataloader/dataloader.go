@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/vikstrous/dataloadgen"
 )
 
@@ -19,7 +19,7 @@ const (
 )
 
 type DbReader struct {
-	pgx *pgx.Conn
+	pgx *pgxpool.Pool
 }
 
 type Loaders struct {
@@ -27,7 +27,7 @@ type Loaders struct {
 	TopicsLoader        *dataloadgen.Loader[string, *model.Topic]
 }
 
-func NewLoaders(pgx *pgx.Conn) *Loaders {
+func NewLoaders(pgx *pgxpool.Pool) *Loaders {
 	dr := &DbReader{pgx: pgx}
 	return &Loaders{
 		TopicArticlesLoader: dataloadgen.NewLoader(dr.GetTopicArticles, dataloadgen.WithWait(time.Millisecond)),
@@ -35,7 +35,7 @@ func NewLoaders(pgx *pgx.Conn) *Loaders {
 	}
 }
 
-func DataLoaderMiddleware(pgx *pgx.Conn, next http.Handler) http.Handler {
+func DataLoaderMiddleware(pgx *pgxpool.Pool, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		loader := NewLoaders(pgx)
 		r = r.WithContext(context.WithValue(r.Context(), loadersKey, loader))
